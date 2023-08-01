@@ -1,8 +1,6 @@
-
-div{
-  border:none !important;
-  background-color: none !important;
-  border-radius: 12px;
+.heart{
+  width:20px;
+  height: 20px;
 }
 
 .close{
@@ -47,7 +45,7 @@ div{
 
 .day{
   font-size: 14px;
-  color:#8c8c8c;
+  color:#FB356E;
 }
 
 .title{
@@ -83,4 +81,164 @@ div{
 .dateWrap {
   display: flex;
   justify-content: space-between;
+}
+
+.header{
+  display: flex;
+  gap:8px;
+  width: 100%;
+  background-color: #fff;
+  padding:4px 16px;
+  position: fixed;
+  top:0;
+  z-index: 5;
+  align-items: center
+  ;
+}
+
+.menu{
+  cursor: pointer;
+  width:20px;
+  height: 20px;
+}
+
+.header-title{
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.modal-wrap{
+  width:100%;
+  border-radius: 12px;
+}
+
+.modal-img{
+  background: #fff;
+  position: relative;
+  width: 100%;
+  object-fit: cover;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+
+.modal-bottom {
+  padding: 16px;
+  margin-top: -5px;
+  background: #fff;
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.modal-title{
+  font-size:16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+
+.modal-place{
+  margin-bottom: 8px;
+  font-size:12px;
+  color:#404040;
+}
+
+.modal-tittle-wrap{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-day{
+  font-size:14px;
+  color:#FB356E;
+}
+
+.modal-desc{
+  font-size:14px;
+  color:#404040;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.modal-date{
+  font-size:14px;
+  color:#2e2e2e;
+
+}
+
+.slick-dots{
+  display: none !important;
+}
+
+.slick-arrow{
+  right:15px !important;
+  color: red !important;
+}
+.slick-prev{
+  left: 15px !important;
+  z-index: 10;
+  color: red !important;
+}
+
+.drawer-wrap{
+  display: flex;
+  flex-direction: column;
+  flex:1;
+}
+
+.MuiPaper-root{
+  width: 78%;
+  max-width: 400px;
+  background-color: #fbfbfb;
+}
+
+.drawer-item{
+  flex: 1 0 1;
+  cursor: pointer;
+  padding:16px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ffcdcd;
+}
+.drawer-item:hover{
+  background-color: #fff4f4;
+
+}
+
+.drawer-left-wrap{
+  display: flex;
+  align-items: center;
+  color:#FB356E; 
+}
+
+.drawer-title{
+  font-size:16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color:#1a1a1a;
+}
+
+.drawer-place{
+  font-size:14px;
+  color:#2e2e2e;
+}
+
+.drawer-date{
+  font-size:12px;
+  color:#404040;
+}
+
+
+.drawer-left{
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+}
+
+.drawer-img{
+  width: 100%;
+  max-width: 80px;
+  height: 100%;
+  object-fit: cover;
 }
