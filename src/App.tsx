@@ -96,10 +96,10 @@ function App() {
 
   // * 범위 계산해서 마커 중복 리스트 뽑기
   const handleGetDuplication = (position: any) => {
-    const minLat = position.attributes.lat - 0.001;
-    const minLng = position.attributes.lng - 0.001;
-    const maxLat = position.attributes.lat + 0.001;
-    const maxLng = position.attributes.lng + 0.001;
+    const minLat = position.attributes.lat - 0.0001;
+    const minLng = position.attributes.lng - 0.0001;
+    const maxLat = position.attributes.lat + 0.0001;
+    const maxLng = position.attributes.lng + 0.0001;
     if (Array.isArray(memory) && memory.length > 0) {
       const Dupl = memory.filter(
         (data) =>
