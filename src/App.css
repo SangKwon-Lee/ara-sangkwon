@@ -245,7 +245,7 @@
 }
 
 .dupl-list{
-  max-width: 250px;
+  max-width: 300px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -271,11 +271,16 @@
 }
 
 .dupl-title{
+  width:141px;
+  overflow:hidden;
+  text-overflow:ellipsis;
   font-size:16px;
 }
 
 .dupl-date{
-  font-size: 12px;
-  font-size:16px;
+  font-size: 14px;
   color:#a6a6a6;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
 }

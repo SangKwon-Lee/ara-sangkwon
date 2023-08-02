@@ -36,8 +36,6 @@ const settings = {
 // * 첫 만난 날 D-day 계산 때문에 -1함
 const firstDay = "2022.04.30";
 
-const apiUrl = process.env.REACT_APP_API_URL;
-console.log(apiUrl);
 function App() {
   //* 지도 중심 좌표
   const [center, setCenter] = useState({
@@ -98,10 +96,10 @@ function App() {
 
   // * 범위 계산해서 마커 중복 리스트 뽑기
   const handleGetDuplication = (position: any) => {
-    const minLat = position.attributes.lat - 0.01;
-    const minLng = position.attributes.lng - 0.01;
-    const maxLat = position.attributes.lat + 0.01;
-    const maxLng = position.attributes.lng + 0.01;
+    const minLat = position.attributes.lat - 0.001;
+    const minLng = position.attributes.lng - 0.001;
+    const maxLat = position.attributes.lat + 0.001;
+    const maxLng = position.attributes.lng + 0.001;
     if (Array.isArray(memory) && memory.length > 0) {
       const Dupl = memory.filter(
         (data) =>
@@ -110,7 +108,6 @@ function App() {
           minLng <= data.attributes.lng &&
           data.attributes.lng <= maxLng
       );
-      console.log(Dupl.length);
       if (Dupl.length > 1) {
         setDupl(Dupl);
         return true;
@@ -121,6 +118,8 @@ function App() {
       return false;
     }
   };
+
+  console.log(overlayPosition);
 
   return (
     <>
