@@ -47,7 +47,6 @@ function App() {
 
   // * 모달 오픈
   const [isOpen, setIsOpen] = useState(false);
-
   // * 커스텀 오버레이
   const [overlayPosition, setOverlayPosition] = useState({ lat: 0, lng: 0 });
   // * 마커 중복일 때
@@ -62,18 +61,22 @@ function App() {
   const [memory, setmemory] = useState<MemoryType[]>([]);
   // * 모달 상세 데이터
   const [modalMemory, setModalMemory] = useState<MemoryType | null>();
+  // * 로딩
+  const [loading, setLoading] = useState(false);
   // * 페이지네이션
   // const [page, setPage] = useState(1);
   // const [total, setTotal] = useState(0);
 
   // * 데이터 받아오기
   const handleGetMemory = async () => {
+    setLoading(true);
     try {
       const { data, status } = await axios.get(
         `${"https://ara-sangkwon-kogong.koyeb.app"}/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${1}`
       );
       if (status === 200 && Array.isArray(data.data)) {
         setmemory(data.data);
+        setLoading(false);
       }
     } catch (e) {
       console.log(e);
@@ -107,8 +110,13 @@ function App() {
           minLng <= data.attributes.lng &&
           data.attributes.lng <= maxLng
       );
-      setDupl(Dupl);
-      return true;
+      console.log(Dupl.length);
+      if (Dupl.length > 1) {
+        setDupl(Dupl);
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -134,6 +142,9 @@ function App() {
           }}
         />
         <h1 className="header-title">ara-sangkwon</h1>
+        {loading && (
+          <img src="/loading.gif" alt="loading" style={{ height: "40px" }} />
+        )}
       </header>
       <Map
         center={center}
