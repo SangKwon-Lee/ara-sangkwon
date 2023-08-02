@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { NavermapsProvider } from "react-naver-maps";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 const root = ReactDOM.createRoot(
@@ -11,9 +10,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <NavermapsProvider ncpClientId="6r8t5h1th9">
-      <App />
-    </NavermapsProvider>
+    <App />
   </React.StrictMode>
 );
 

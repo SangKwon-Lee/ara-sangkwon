@@ -116,6 +116,7 @@
   background: #fff;
   position: relative;
   width: 100%;
+  height: 300px;
   object-fit: cover;
   border-top-right-radius: 12px;
   border-top-left-radius: 12px;
@@ -241,4 +242,40 @@
   max-width: 80px;
   height: 100%;
   object-fit: cover;
+}
+
+.dupl-list{
+  max-width: 250px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+}
+
+.dupl-wrap{
+  padding:16px;
+  border-bottom:1px solid #fff4f4;
+  display: flex;
+  align-items: center;
+  gap:8px;
+  z-index: 10;
+}
+
+.dupl-wrap:hover{
+  background-color: rgba(255, 214, 214, 0.2);
+}
+
+.dupl-day{
+  color:#FB356E; 
+  font-size: 14px;
+}
+
+.dupl-title{
+  font-size:16px;
+}
+
+.dupl-date{
+  font-size: 12px;
+  font-size:16px;
+  color:#a6a6a6;
 }

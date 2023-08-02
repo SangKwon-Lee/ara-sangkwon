@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import {
   Map,
@@ -6,9 +6,12 @@ import {
   CustomOverlayMap,
   MarkerClusterer,
 } from "react-kakao-maps-sdk";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
+import dayjs from "dayjs";
+import axios from "axios";
 import Slider from "react-slick";
+import Box from "@mui/material/Box";
+import { MemoryType } from "./type";
+import Modal from "@mui/material/Modal";
 import Drawer from "@mui/material/Drawer";
 const style = {
   position: "absolute" as "absolute",
@@ -29,6 +32,9 @@ const settings = {
   slidesToShow: 1,
   slidesToScroll: 1,
 };
+
+const firstDay = "2022.04.30";
+
 function App() {
   const [center, setCenter] = useState({
     lat: 33.5563,
@@ -36,19 +42,59 @@ function App() {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [overlayPosition, setOverlayPosition] = useState({ lat: 0, lng: 0 });
+  const [duplPosition, setDuplPosition] = useState({ lat: 0, lng: 0 });
   const [heartPosition, setHeartPosition] = useState({ lat: 0, lng: 0 });
   const [open, setOpen] = useState(false);
-  const data = [
-    {
-      lat: 33.5563,
-      lng: 126.79581,
-    },
-    {
-      lat: 33.5563,
-      lng: 126.79881,
-    },
-  ];
+  const [memory, setmemory] = useState<MemoryType[]>([]);
+  const [modalMemory, setModalMemory] = useState<MemoryType | null>();
+  const [dupl, setDupl] = useState<MemoryType[]>([]);
+  // * 페이지네이션
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
+  const handleGetMemory = async () => {
+    try {
+      const { data, status } = await axios.get(
+        `http://localhost:1337/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${page}`
+      );
+      if (status === 200 && Array.isArray(data.data)) {
+        setmemory(data.data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (memory.length === 0) {
+      handleGetMemory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDay = (day: any) => {
+    return Math.abs(Math.floor(dayjs(firstDay).diff(day, "day", true)));
+  };
+
+  const handleGetDuplication = (position: any) => {
+    const minLat = position.attributes.lat - 0.01;
+    const minLng = position.attributes.lng - 0.01;
+    const maxLat = position.attributes.lat + 0.01;
+    const maxLng = position.attributes.lng + 0.01;
+    if (Array.isArray(memory) && memory.length > 0) {
+      const Dupl = memory.filter(
+        (data) =>
+          minLat <= data.attributes.lat &&
+          data.attributes.lat <= maxLat &&
+          minLng <= data.attributes.lng &&
+          data.attributes.lng <= maxLng
+      );
+      setDupl(Dupl);
+      return true;
+    } else {
+      return false;
+    }
+  };
   return (
     <>
       <header className="header">
@@ -75,73 +121,161 @@ function App() {
         isPanto={true}
         style={{ width: "100%", height: "100vh" }}
         level={3}
+        onClick={(_t, mouseEvent) => {
+          setOverlayPosition({
+            lat: 0,
+            lng: 0,
+          });
+          setDupl([]);
+          console.log({
+            lat: mouseEvent.latLng.getLat(),
+            lng: mouseEvent.latLng.getLng(),
+          });
+        }}
       >
         <MarkerClusterer minLevel={3} averageCenter={true}>
-          {data.map((position, index) => (
-            <MapMarker
-              title={String(index)}
-              onClick={() => {
-                setCenter({ lat: position.lat, lng: position.lng });
-                setOverlayPosition({
-                  lat: position.lat,
-                  lng: position.lng,
-                });
-              }}
-              key={`${position.lat}-${position.lng}`}
-              position={{ lat: position.lat, lng: position.lng }}
-              image={{
-                src:
-                  (position.lat === heartPosition.lat &&
-                    position.lng === heartPosition.lng) ||
-                  (overlayPosition.lat === position.lat &&
-                    overlayPosition.lng === position.lng)
-                    ? `/heart_pink.svg`
-                    : `/heart_black.svg`,
-                size: { width: 25, height: 25 },
-              }}
-              onMouseOver={() =>
-                setHeartPosition({
-                  lat: position.lat,
-                  lng: position.lng,
-                })
-              }
-              onMouseOut={() =>
-                setHeartPosition({
-                  lat: 0,
-                  lng: 0,
-                })
-              }
-            ></MapMarker>
-          ))}
+          {Array.isArray(memory) &&
+            memory.length > 0 &&
+            memory.map((position, index) => (
+              <MapMarker
+                title={String(index)}
+                onClick={() => {
+                  if (handleGetDuplication(position)) {
+                    handleGetDuplication(position);
+                    setDuplPosition({
+                      lat: position.attributes.lat,
+                      lng: position.attributes.lng,
+                    });
+                  } else {
+                    setModalMemory(position);
+                    setCenter({
+                      lat: position.attributes.lat,
+                      lng: position.attributes.lng,
+                    });
+                    setOverlayPosition({
+                      lat: position.attributes.lat,
+                      lng: position.attributes.lng,
+                    });
+                    setHeartPosition({
+                      lat: position.attributes.lat,
+                      lng: position.attributes.lng,
+                    });
+                  }
+                }}
+                key={`${position.attributes.lat}-${position.attributes.lng}`}
+                position={{
+                  lat: position.attributes.lat,
+                  lng: position.attributes.lng,
+                }}
+                image={{
+                  src:
+                    (position.attributes.lat === heartPosition.lat &&
+                      position.attributes.lng === heartPosition.lng) ||
+                    (overlayPosition.lat === position.attributes.lat &&
+                      overlayPosition.lng === position.attributes.lng)
+                      ? `/heart_pink.svg`
+                      : `/heart_black.svg`,
+                  size: { width: 25, height: 25 },
+                }}
+                onMouseOver={() =>
+                  setHeartPosition({
+                    lat: position.attributes.lat,
+                    lng: position.attributes.lng,
+                  })
+                }
+                onMouseOut={() =>
+                  setHeartPosition({
+                    lat: 0,
+                    lng: 0,
+                  })
+                }
+              ></MapMarker>
+            ))}
         </MarkerClusterer>
-        {data.map(
-          (item, index) =>
-            overlayPosition.lat === item.lat &&
-            overlayPosition.lng === item.lng && (
-              <CustomOverlayMap
-                position={{ lat: item.lat, lng: item.lng }}
-                yAnchor={1.15}
-                key={index}
-              >
-                <div className="wrapper">
-                  <img
-                    className="images"
-                    alt="img"
-                    src="/test.jpg"
-                    onClick={() => setIsOpen(true)}
-                  />
-                  <div className="bottom">
-                    <div className="titleWrap">
-                      <div className="title"> 피맥과 함께</div>
-                      <div className="day">+546</div>
-                    </div>
-                    <div className="place">맥파이</div>
-                    <div className="date"> 23.07.31</div>
+        {Array.isArray(dupl) && dupl.length > 0 && (
+          <CustomOverlayMap
+            position={{
+              lat: duplPosition.lat,
+              lng: duplPosition.lng,
+            }}
+            yAnchor={1.5}
+            xAnchor={0.5}
+            clickable
+          >
+            <div className="dupl-list">
+              {dupl.map((du, index) => (
+                <div
+                  className="dupl-wrap"
+                  key={index}
+                  onClick={() => {
+                    setOverlayPosition({
+                      lat: du.attributes.lat,
+                      lng: du.attributes.lng,
+                    });
+                    setHeartPosition({
+                      lat: du.attributes.lat,
+                      lng: du.attributes.lng,
+                    });
+                    setDuplPosition({
+                      lat: 0,
+                      lng: 0,
+                    });
+                    setModalMemory(du);
+                  }}
+                >
+                  <div className="dupl-day">
+                    +{handleDay(du?.attributes?.date)}
+                  </div>
+                  <div className="dupl-title">{du?.attributes?.title}</div>
+                  <div className="dupl-date">
+                    {dayjs(du?.attributes?.date).format("YY.MM.DD")}
                   </div>
                 </div>
-              </CustomOverlayMap>
-            )
+              ))}
+            </div>
+          </CustomOverlayMap>
         )}
+        {Array.isArray(memory) &&
+          memory.length > 0 &&
+          memory.map(
+            (item, index) =>
+              overlayPosition.lat === item.attributes.lat &&
+              overlayPosition.lng === item.attributes.lng && (
+                <CustomOverlayMap
+                  clickable
+                  position={{
+                    lat: item.attributes.lat,
+                    lng: item.attributes.lng,
+                  }}
+                  yAnchor={1.15}
+                  key={index}
+                  xAnchor={0.5}
+                >
+                  <div className="wrapper">
+                    <img
+                      className="images"
+                      alt="thumbnail"
+                      src={`http://localhost:1337${item.attributes.thumbnail.data?.attributes?.url}`}
+                      onClick={() => {
+                        setIsOpen(true);
+                      }}
+                    />
+                    <div className="bottom">
+                      <div className="titleWrap">
+                        <div className="title"> {item.attributes.title}</div>
+                        <div className="day">
+                          +{handleDay(item.attributes.date)}
+                        </div>
+                      </div>
+                      <div className="place">{item.attributes.place}</div>
+                      <div className="date">
+                        {dayjs(item.attributes.date).format("YY.MM.DD")}
+                      </div>
+                    </div>
+                  </div>
+                </CustomOverlayMap>
+              )
+          )}
       </Map>
 
       <Modal
@@ -152,24 +286,34 @@ function App() {
       >
         <Box sx={style}>
           <div className="modal-wrap">
-            <Slider {...settings}>
-              <div>
-                <img className="modal-img" alt="img" src="/test.jpg" />
-              </div>
-              <div>
-                <img className="modal-img" alt="img" src="/test.jpg" />
-              </div>
-            </Slider>
+            {Array.isArray(modalMemory?.attributes?.slide?.data) && (
+              <Slider {...settings}>
+                {modalMemory?.attributes?.slide?.data.map((slide, index) => (
+                  <div key={index}>
+                    <img
+                      className="modal-img"
+                      alt="img"
+                      src={`http://localhost:1337${slide.attributes.url}`}
+                    />
+                  </div>
+                ))}
+              </Slider>
+            )}
             <div className="modal-bottom">
-              <div className="modal-title">피맥과 함께</div>
-              <div className="modal-place">맥파이</div>
-              <div className="modal-desc">
-                피맥과 함께피맥과 함께피맥과 함께피맥과 함께피맥과 함께 피맥과
-                함께피맥과 함께피맥과 함께피맥과 함께피맥과 함께
+              <div className="modal-title">
+                {modalMemory?.attributes?.title}
               </div>
+              <div className="modal-place">
+                {modalMemory?.attributes?.place}
+              </div>
+              <div className="modal-desc">{modalMemory?.attributes?.desc}</div>
               <div className="modal-tittle-wrap">
-                <div className="modal-date">23.07.23</div>
-                <div className="modal-day">+546</div>
+                <div className="modal-date">
+                  {modalMemory?.attributes?.date}
+                </div>
+                <div className="modal-day">
+                  +{handleDay(modalMemory?.attributes?.date)}
+                </div>
               </div>
             </div>
           </div>
@@ -183,59 +327,45 @@ function App() {
         onClose={() => setOpen(false)}
       >
         <div className="drawer-wrap">
-          <div
-            className="drawer-item"
-            onClick={() => {
-              setCenter({ lat: 33.5563, lng: 126.79581 });
-              setOpen(false);
-              setOverlayPosition({
-                lat: 33.5563,
-                lng: 126.79581,
-              });
-              setHeartPosition({
-                lat: 33.5563,
-                lng: 126.79581,
-              });
-            }}
-          >
-            <div className="drawer-left-wrap">
-              546일
-              <div className="drawer-left">
-                <div className="drawer-title">피맥과 함께</div>
-                <div className="drawer-place">맥파이</div>
-                <div className="drawer-date">23.07.23</div>
+          {Array.isArray(memory) &&
+            memory.length > 0 &&
+            memory.map((data, index) => (
+              <div
+                key={index}
+                className="drawer-item"
+                onClick={() => {
+                  setCenter({
+                    lat: data.attributes.lat,
+                    lng: data.attributes.lng,
+                  });
+                  setHeartPosition({
+                    lat: data.attributes.lat,
+                    lng: data.attributes.lng,
+                  });
+                  setOverlayPosition({
+                    lat: data.attributes.lat,
+                    lng: data.attributes.lng,
+                  });
+                  setOpen(false);
+                }}
+              >
+                <div className="drawer-left-wrap">
+                  {handleDay(data?.attributes.date)}일
+                  <div className="drawer-left">
+                    <div className="drawer-title">{data.attributes.title}</div>
+                    <div className="drawer-place">{data.attributes.place}</div>
+                    <div className="drawer-date">
+                      {dayjs(data.attributes.date).format("YY.MM.DD")}
+                    </div>
+                  </div>
+                </div>
+                <img
+                  className="drawer-img"
+                  src={`http://localhost:1337${data?.attributes.thumbnail.data?.attributes?.url}`}
+                  alt="img"
+                />
               </div>
-            </div>
-            <img className="drawer-img" src="/test.jpg" alt="img" />
-          </div>
-          <div
-            className="drawer-item"
-            onClick={() => {
-              setCenter({ lat: 33.5563, lng: 126.79881 });
-              setOpen(false);
-            }}
-          >
-            <div className="drawer-left-wrap">
-              546일
-              <div className="drawer-left">
-                <div className="drawer-title">피맥과 함께</div>
-                <div className="drawer-place">맥파이</div>
-                <div className="drawer-date">23.07.23</div>
-              </div>
-            </div>
-            <img className="drawer-img" src="/test.jpg" alt="img" />
-          </div>{" "}
-          <div className="drawer-item">
-            <div className="drawer-left-wrap">
-              546일
-              <div className="drawer-left">
-                <div className="drawer-title">피맥과 함께</div>
-                <div className="drawer-place">맥파이</div>
-                <div className="drawer-date">23.07.23</div>
-              </div>
-            </div>
-            <img className="drawer-img" src="/test.jpg" alt="img" />
-          </div>
+            ))}
         </div>
       </Drawer>
     </>
