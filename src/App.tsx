@@ -55,7 +55,7 @@ function App() {
   const handleGetMemory = async () => {
     try {
       const { data, status } = await axios.get(
-        `http://localhost:1337/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${page}`
+        `https://ara-sangkwon-kogong.koyeb.app/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${page}`
       );
       if (status === 200 && Array.isArray(data.data)) {
         setmemory(data.data);
@@ -255,7 +255,7 @@ function App() {
                     <img
                       className="images"
                       alt="thumbnail"
-                      src={`http://localhost:1337${item.attributes.thumbnail.data?.attributes?.url}`}
+                      src={`https://ara-sangkwon-kogong.koyeb.app${item.attributes.thumbnail.data?.attributes?.url}`}
                       onClick={() => {
                         setIsOpen(true);
                       }}
@@ -293,7 +293,7 @@ function App() {
                     <img
                       className="modal-img"
                       alt="img"
-                      src={`http://localhost:1337${slide.attributes.url}`}
+                      src={`https://ara-sangkwon-kogong.koyeb.app${slide.attributes.url}`}
                     />
                   </div>
                 ))}
@@ -361,7 +361,7 @@ function App() {
                 </div>
                 <img
                   className="drawer-img"
-                  src={`http://localhost:1337${data?.attributes.thumbnail.data?.attributes?.url}`}
+                  src={`https://ara-sangkwon-kogong.koyeb.app${data?.attributes.thumbnail.data?.attributes?.url}`}
                   alt="img"
                 />
               </div>
