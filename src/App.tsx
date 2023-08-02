@@ -33,29 +33,44 @@ const settings = {
   slidesToScroll: 1,
 };
 
+// * 첫 만난 날 D-day 계산 때문에 -1함
 const firstDay = "2022.04.30";
 
+const apiUrl = process.env.REACT_APP_API_URL;
+console.log(apiUrl);
 function App() {
+  //* 지도 중심 좌표
   const [center, setCenter] = useState({
     lat: 33.5563,
     lng: 126.79881,
   });
-  const [isOpen, setIsOpen] = useState(false);
-  const [overlayPosition, setOverlayPosition] = useState({ lat: 0, lng: 0 });
-  const [duplPosition, setDuplPosition] = useState({ lat: 0, lng: 0 });
-  const [heartPosition, setHeartPosition] = useState({ lat: 0, lng: 0 });
-  const [open, setOpen] = useState(false);
-  const [memory, setmemory] = useState<MemoryType[]>([]);
-  const [modalMemory, setModalMemory] = useState<MemoryType | null>();
-  const [dupl, setDupl] = useState<MemoryType[]>([]);
-  // * 페이지네이션
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
 
+  // * 모달 오픈
+  const [isOpen, setIsOpen] = useState(false);
+
+  // * 커스텀 오버레이
+  const [overlayPosition, setOverlayPosition] = useState({ lat: 0, lng: 0 });
+  // * 마커 중복일 때
+  const [duplPosition, setDuplPosition] = useState({ lat: 0, lng: 0 });
+  // * 마커 중복 데이터 리스트
+  const [dupl, setDupl] = useState<MemoryType[]>([]);
+  // * 하트 이미지 변경
+  const [heartPosition, setHeartPosition] = useState({ lat: 0, lng: 0 });
+  // * 메뉴 오픈
+  const [open, setOpen] = useState(false);
+  // * 리스트
+  const [memory, setmemory] = useState<MemoryType[]>([]);
+  // * 모달 상세 데이터
+  const [modalMemory, setModalMemory] = useState<MemoryType | null>();
+  // * 페이지네이션
+  // const [page, setPage] = useState(1);
+  // const [total, setTotal] = useState(0);
+
+  // * 데이터 받아오기
   const handleGetMemory = async () => {
     try {
       const { data, status } = await axios.get(
-        `https://ara-sangkwon-kogong.koyeb.app/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${page}`
+        `${apiUrl}/api/memories?populate=*&pagination[pageSize]=100&pagination[page]=${1}`
       );
       if (status === 200 && Array.isArray(data.data)) {
         setmemory(data.data);
@@ -65,6 +80,7 @@ function App() {
     }
   };
 
+  // * 데이터 받아오기
   useEffect(() => {
     if (memory.length === 0) {
       handleGetMemory();
@@ -72,10 +88,12 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // * D-day 계산
   const handleDay = (day: any) => {
     return Math.abs(Math.floor(dayjs(firstDay).diff(day, "day", true)));
   };
 
+  // * 범위 계산해서 마커 중복 리스트 뽑기
   const handleGetDuplication = (position: any) => {
     const minLat = position.attributes.lat - 0.01;
     const minLng = position.attributes.lng - 0.01;
@@ -95,6 +113,7 @@ function App() {
       return false;
     }
   };
+
   return (
     <>
       <header className="header">
@@ -255,7 +274,7 @@ function App() {
                     <img
                       className="images"
                       alt="thumbnail"
-                      src={`https://ara-sangkwon-kogong.koyeb.app${item.attributes.thumbnail.data?.attributes?.url}`}
+                      src={`${apiUrl}${item.attributes.thumbnail.data?.attributes?.url}`}
                       onClick={() => {
                         setIsOpen(true);
                       }}
@@ -293,7 +312,7 @@ function App() {
                     <img
                       className="modal-img"
                       alt="img"
-                      src={`https://ara-sangkwon-kogong.koyeb.app${slide.attributes.url}`}
+                      src={`${apiUrl}${slide.attributes.url}`}
                     />
                   </div>
                 ))}
@@ -361,7 +380,7 @@ function App() {
                 </div>
                 <img
                   className="drawer-img"
-                  src={`https://ara-sangkwon-kogong.koyeb.app${data?.attributes.thumbnail.data?.attributes?.url}`}
+                  src={`${apiUrl}${data?.attributes.thumbnail.data?.attributes?.url}`}
                   alt="img"
                 />
               </div>
