@@ -20,6 +20,7 @@
   cursor: pointer;
   border-radius: 12px;
   box-shadow: rgb(0 0 0 / 4%) 0 4px 20px 0;
+  background-color: #fff2f2;
 }
 
 .images{
@@ -201,9 +202,10 @@
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #ffcdcd;
+  background-color: #ffdede;
 }
 .drawer-item:hover{
-  background-color: #fff4f4;
+  background-color: #ffdede;
 
 }
 
