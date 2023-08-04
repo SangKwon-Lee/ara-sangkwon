@@ -110,6 +110,7 @@ function App() {
       );
       if (Dupl.length > 1) {
         setDupl(Dupl);
+        setOverlayPosition({ lat: 0, lng: 0 });
         return true;
       } else {
         return false;
@@ -141,9 +142,6 @@ function App() {
           }}
         />
         <h1 className="header-title">ara-sangkwon</h1>
-        {loading && (
-          <img src="/loading.gif" alt="loading" style={{ height: "40px" }} />
-        )}
       </header>
       <Map
         center={center}
@@ -175,6 +173,10 @@ function App() {
                       lat: position.attributes.lat,
                       lng: position.attributes.lng,
                     });
+                    setOverlayPosition({
+                      lat: 0,
+                      lng: 0,
+                    });
                   } else {
                     setModalMemory(position);
                     setCenter({
@@ -184,6 +186,10 @@ function App() {
                     setOverlayPosition({
                       lat: position.attributes.lat,
                       lng: position.attributes.lng,
+                    });
+                    setDuplPosition({
+                      lat: 0,
+                      lng: 0,
                     });
                     setHeartPosition({
                       lat: position.attributes.lat,
@@ -403,6 +409,28 @@ function App() {
             ))}
         </div>
       </Drawer>
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100vh",
+            zIndex: 100000,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            top: 0,
+          }}
+        >
+          <img
+            src="/heart_loading.gif"
+            alt="loading"
+            style={{
+              height: "200px",
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }
