@@ -34,13 +34,13 @@ const settings = {
 };
 
 // * 첫 만난 날 D-day 계산 때문에 -1함
-const firstDay = "2022.04.30";
+const firstDay = "2022.04.15";
 
 function App() {
   //* 지도 중심 좌표
   const [center, setCenter] = useState({
-    lat: 33.5563,
-    lng: 126.79881,
+    lat: 37.56405903991691,
+    lng: 126.98436896026226,
   });
 
   // * 모달 오픈
@@ -120,8 +120,6 @@ function App() {
     }
   };
 
-  console.log(overlayPosition);
-
   return (
     <>
       <header className="header">
@@ -147,7 +145,7 @@ function App() {
         center={center}
         isPanto={true}
         style={{ width: "100%", height: "100vh" }}
-        level={3}
+        level={5}
         onClick={(_t, mouseEvent) => {
           setOverlayPosition({
             lat: 0,
@@ -368,45 +366,54 @@ function App() {
         <div className="drawer-wrap">
           {Array.isArray(memory) &&
             memory.length > 0 &&
-            memory.map((data, index) => (
-              <div
-                key={index}
-                className="drawer-item"
-                onClick={() => {
-                  setCenter({
-                    lat: data.attributes.lat,
-                    lng: data.attributes.lng,
-                  });
-                  setHeartPosition({
-                    lat: data.attributes.lat,
-                    lng: data.attributes.lng,
-                  });
-                  setOverlayPosition({
-                    lat: data.attributes.lat,
-                    lng: data.attributes.lng,
-                  });
-                  setOpen(false);
-                }}
-              >
-                <div className="drawer-left-wrap">
-                  {handleDay(data?.attributes.date)}일
-                  <div className="drawer-left">
-                    <div className="drawer-title">{data.attributes.title}</div>
-                    <div className="drawer-place">{data.attributes.place}</div>
-                    <div className="drawer-date">
-                      {dayjs(data.attributes.date).format("YY.MM.DD")}
+            memory
+              .sort(
+                (a, b) =>
+                  handleDay(a?.attributes.date) - handleDay(b?.attributes.date)
+              )
+              .map((data, index) => (
+                <div
+                  key={index}
+                  className="drawer-item"
+                  onClick={() => {
+                    setCenter({
+                      lat: data.attributes.lat,
+                      lng: data.attributes.lng,
+                    });
+                    setHeartPosition({
+                      lat: data.attributes.lat,
+                      lng: data.attributes.lng,
+                    });
+                    setOverlayPosition({
+                      lat: data.attributes.lat,
+                      lng: data.attributes.lng,
+                    });
+                    setOpen(false);
+                  }}
+                >
+                  <div className="drawer-left-wrap">
+                    {handleDay(data?.attributes.date)}일
+                    <div className="drawer-left">
+                      <div className="drawer-title">
+                        {data.attributes.title}
+                      </div>
+                      <div className="drawer-place">
+                        {data.attributes.place}
+                      </div>
+                      <div className="drawer-date">
+                        {dayjs(data.attributes.date).format("YY.MM.DD")}
+                      </div>
                     </div>
                   </div>
+                  <img
+                    className="drawer-img"
+                    src={`${"https://ara-sangkwon-kogong.koyeb.app"}${
+                      data?.attributes.thumbnail.data?.attributes?.url
+                    }`}
+                    alt="img"
+                  />
                 </div>
-                <img
-                  className="drawer-img"
-                  src={`${"https://ara-sangkwon-kogong.koyeb.app"}${
-                    data?.attributes.thumbnail.data?.attributes?.url
-                  }`}
-                  alt="img"
-                />
-              </div>
-            ))}
+              ))}
         </div>
       </Drawer>
       {loading && (

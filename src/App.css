@@ -202,11 +202,10 @@
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #ffcdcd;
-  background-color: #ffdede;
+  /* background-color: #ffdede; */
 }
 .drawer-item:hover{
-  background-color: #ffdede;
-
+  background-color: #fff7f7;
 }
 
 .drawer-left-wrap{
