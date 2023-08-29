@@ -369,7 +369,7 @@ function App() {
             memory
               .sort(
                 (a, b) =>
-                  handleDay(a?.attributes.date) - handleDay(b?.attributes.date)
+                  handleDay(b?.attributes.date) - handleDay(a?.attributes.date)
               )
               .map((data, index) => (
                 <div
