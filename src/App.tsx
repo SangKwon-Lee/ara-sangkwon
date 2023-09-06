@@ -34,7 +34,7 @@ const settings = {
 };
 
 // * 첫 만난 날 D-day 계산 때문에 -1함
-const firstDay = "2022.04.15";
+const firstDay = "2022.04.30";
 
 function App() {
   //* 지도 중심 좌표
@@ -369,7 +369,7 @@ function App() {
             memory
               .sort(
                 (a, b) =>
-                  handleDay(b?.attributes.date) - handleDay(a?.attributes.date)
+                  handleDay(a?.attributes.date) - handleDay(b?.attributes.date)
               )
               .map((data, index) => (
                 <div
