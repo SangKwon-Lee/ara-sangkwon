@@ -212,6 +212,7 @@
   display: flex;
   align-items: center;
   color:#FB356E; 
+  white-space: nowrap;
 }
 
 .drawer-title{
@@ -219,6 +220,7 @@
   font-weight: 600;
   margin-bottom: 4px;
   color:#1a1a1a;
+  white-space: pre-wrap;
 }
 
 .drawer-place{

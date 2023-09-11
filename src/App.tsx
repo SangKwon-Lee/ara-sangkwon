@@ -34,7 +34,7 @@ const settings = {
 };
 
 // * 첫 만난 날 D-day 계산 때문에 -1함
-const firstDay = "2022.04.30";
+const firstDay = "2022-04-30";
 
 function App() {
   //* 지도 중심 좌표
@@ -91,7 +91,9 @@ function App() {
 
   // * D-day 계산
   const handleDay = (day: any) => {
-    return Math.abs(Math.floor(dayjs(firstDay).diff(day, "day", true)));
+    const date = dayjs(day).format("YYYY-MM-DD").replace(/-/g, "");
+    const firstDay2 = dayjs(firstDay).format("YYYY-MM-DD").replace(/-/g, "");
+    return Math.abs(Math.floor(dayjs(firstDay2).diff(date, "day", true)));
   };
 
   // * 범위 계산해서 마커 중복 리스트 뽑기
