@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <!-- <a href="https://github.com/othneildrew/Best-README-Template"> -->
-    <img src="public/images/hextech_chest.png" alt="Logo" width="80" height="80">
+    <img src="public/readme.png" alt="Logo" width="80" height="80">
   <!-- </a> -->
 
   <h3 align="center">아라 & 상권의 데이트 지도</h3>
@@ -20,7 +20,7 @@
 
 ## About The Project
 
- <img src="public/images/readme.png" alt="Logo" width="400" height="400">
+ <img src="public/readme.png" alt="Logo" width="400" height="400">
 
 </br>
 아라와 상권의 데이트 지도 입니다.
